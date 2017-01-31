@@ -18,21 +18,20 @@ import com.google.common.base.Preconditions;
 
 import jssc.SerialPort;
 
-public class ThermometryReaderMain
+public class MagnetometersReaderMain
 {
-	private static final int BAUD_RATE = 115200;
-	private static final Logger sLogger = Logger.getLogger(ThermometryReaderMain.class.getName());
+	private static final int BAUD_RATE = 19200;
+	private static final Logger sLogger = Logger.getLogger(MagnetometersReaderMain.class.getName());
 	//Need to set port
-	private final String fPort = "COM3"; 
-	private final boolean fReadingFile = true;
+	private final String fPort = "COM7"; 
+	private final boolean fReadingFile = false;
 	public final static boolean fDumpData = false;
 	public static List<Float> fResistance = new ArrayList<Float>();
 	public static List<Float> fTemperature = new ArrayList<Float>();
 	public Calibrator calibrators[] = new Calibrator[16]; //TRead has 16 channels
 
-	public ThermometryReaderMain(){
+	public MagnetometersReaderMain(){
 
-		setupCalibrationCurves();
 	}
 
 	protected void openCommunication() throws IOException
@@ -58,20 +57,6 @@ public class ThermometryReaderMain
 	}
 
 
-
-	public void setupCalibrationCurves() {
-		try {
-			//Send in all the calibration files for each channel of the TRead
-			for (int i = 0; i < calibrators.length; i++) {
-				//calibrators[i] =  new Calibrator("calTest.txt");
-				calibrators[i] =  new Calibrator("U02728.txt");
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	private void initialize(String portName) throws Exception
 	{
 		Preconditions.checkNotNull(portName);
@@ -81,7 +66,7 @@ public class ThermometryReaderMain
 
 		if (serialPort.isOpened())
 		{
-			System.out.println("Error: Thermometry Reader Serial Port is currently in use");
+			System.out.println("Error: Magnetometers Reader Serial Port is currently in use");
 		}
 
 		else{
@@ -94,7 +79,7 @@ public class ThermometryReaderMain
 		SerialInputStream serialPortInputStream= new SerialInputStream(serialPort);
 		SerialOutputStream serialPortOutputStream= new SerialOutputStream(serialPort);
 
-		(new Thread(new SerialReader(serialPortInputStream,calibrators))).start();
+		(new Thread(new SerialReader(serialPortInputStream))).start();
 		(new Thread(new SerialWriter(serialPortOutputStream))).start();
 
 	}
@@ -131,8 +116,8 @@ public class ThermometryReaderMain
 	public static void main( String[] args ) {
 		try {
 			int publicInt = 0;
-			ThermometryReaderMain therm = new ThermometryReaderMain();
-			therm.openCommunication();
+			MagnetometersReaderMain mag = new MagnetometersReaderMain();
+			mag.openCommunication();
 		} catch( Exception e ) {
 			e.printStackTrace();
 		}

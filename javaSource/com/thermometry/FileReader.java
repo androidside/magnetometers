@@ -52,7 +52,7 @@ public class FileReader implements Runnable
 			if (c > 0)
 			{
 
-				if(ThermometryReaderMain.fDumpData == false){
+				if(MagnetometersReaderMain.fDumpData == false){
 
 					if(buffer[0] == '*'){
 						starDetected = true;
