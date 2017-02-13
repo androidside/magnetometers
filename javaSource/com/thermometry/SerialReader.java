@@ -7,19 +7,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.lang.*;
 
-import com.thermometry.BoardTypeHandler;
 import com.thermometry.SerialInputStream;
 import com.thermometry.MagnetometersReaderMain;
-
-import calibration.Calibrator;
 
 
 public class SerialReader implements Runnable
 {
 
 	SerialInputStream in;
-	private BoardTypeHandler handler = new BoardTypeHandler();
-	public Calibrator calibrators[] = new Calibrator[16]; //TRead has 16 channels
 
 
 
@@ -67,9 +62,7 @@ public class SerialReader implements Runnable
 			//                System.out.println("C = "+c+" and readBuf = "+readBuf[0]);
 			if (c > 0)
 			{
-				if(MagnetometersReaderMain.fDumpData == false){
-
-					///  Display readout  //
+				//  Display readout  //
 
 					if (flag[4] == 1 && buffer[0] != 0x0d) {
 						raw_data[count] = buffer[0];
@@ -209,7 +202,7 @@ public class SerialReader implements Runnable
 							}
 						}
 					}
-				}
+				
 				else if (c < 0)
 				{   done = true;
 				try

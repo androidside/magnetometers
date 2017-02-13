@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import calibration.Calibrator;
 import com.google.common.base.Preconditions;
 
 import jssc.SerialPort;
@@ -25,10 +24,6 @@ public class MagnetometersReaderMain
 	//Need to set port
 	private final String fPort = "COM7"; 
 	private final boolean fReadingFile = false;
-	public final static boolean fDumpData = false;
-	public static List<Float> fResistance = new ArrayList<Float>();
-	public static List<Float> fTemperature = new ArrayList<Float>();
-	public Calibrator calibrators[] = new Calibrator[16]; //TRead has 16 channels
 
 	public MagnetometersReaderMain(){
 
@@ -51,7 +46,7 @@ public class MagnetometersReaderMain
 
 		else {
 
-			readFile();
+			//readFile();
 		}
 
 	}
@@ -80,34 +75,8 @@ public class MagnetometersReaderMain
 		SerialOutputStream serialPortOutputStream= new SerialOutputStream(serialPort);
 
 		(new Thread(new SerialReader(serialPortInputStream))).start();
-		(new Thread(new SerialWriter(serialPortOutputStream))).start();
-
-	}
-
-
-	private void readFile() throws FileNotFoundException
-	{
-		OutputStream out = null;
-		System.out.println("Opening File");
-		//URL pathFile = getClass().getResource("/TextFiles/Tread1.txt");
-		URL pathFile = getClass().getResource("/TextFiles/AllData.txt");
-		InputStream is = null;
-
-		try {
-			is = pathFile.openStream();
-		} catch (IOException  e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		OutputStream os = new OutputStream() {
-			@Override
-			public void write(int b) throws IOException {
-				System.out.println("Serial Port not Configured");
-			}
-		};
-
-		(new Thread(new FileReader(is, calibrators))).start();
-		(new Thread(new SerialWriter(os))).start();
+		//We don't need to write to the magnetometer
+		//(new Thread(new SerialWriter(serialPortOutputStream))).start();
 
 	}
 
