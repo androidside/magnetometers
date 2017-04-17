@@ -74,7 +74,7 @@ public class MagnetometersReaderMain
 		SerialInputStream serialPortInputStream= new SerialInputStream(serialPort);
 		SerialOutputStream serialPortOutputStream= new SerialOutputStream(serialPort);
 
-		(new Thread(new SerialReader(serialPortInputStream))).start();
+		(new Thread(new SerialReader2(serialPortInputStream))).start(); //Changed to Magnetometer2
 		//We don't need to write to the magnetometer
 		//(new Thread(new SerialWriter(serialPortOutputStream))).start();
 
