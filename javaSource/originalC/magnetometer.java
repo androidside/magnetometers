@@ -687,12 +687,12 @@ int main(/*int argc, char *argv[]*/void) {
 						flag[2] = 1;
 		//				printf("flag[2] = %d\n", flag[2]);
 		//				fflush(stdout);
-					} else if (buffer[0] == 0x70 && flag[2] == 1){
+					} else if (buffer[0] == 0x70 && flag[2] == 1){ //DORIENT
 						flag[3] = 1;
 		//				printf("flag[3] = %d\n", flag[3]);
 		//				fflush(stdout);
 
-					} else if (buffer[0] == 0x12 && flag[3] == 1){
+					} else if (buffer[0] == 0x12 && flag[3] == 1){ //18 Bytes
 						flag[4] = 1;
 						//printf("flag[4] = %d\n", flag[4]);
 						//fflush(stdout);

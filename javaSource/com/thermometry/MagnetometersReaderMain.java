@@ -22,7 +22,7 @@ public class MagnetometersReaderMain
 	private static final int BAUD_RATE = 19200;
 	private static final Logger sLogger = Logger.getLogger(MagnetometersReaderMain.class.getName());
 	//Need to set port
-	private final String fPort = "COM7"; 
+	private final String fPort = "COM3"; 
 	private final boolean fReadingFile = false;
 
 	public MagnetometersReaderMain(){

@@ -44,22 +44,25 @@ public class SerialReader implements Runnable
 
 		int ret = c; //Get the character
 		//counter++; //Allow to avoid taking into account the leftover values in the serial port
-		System.out.print("Starting Reader ...");
+		System.out.println("Starting ...");
 
 		while (done == false)
 		{
+			System.out.println("Reading");
 			try
 			{
 				//If avaliable == 0 the method does block
 
 				c = this.in.read(buffer,0,1);
+				System.out.println("C Read");
+				
 			}
 			catch (IOException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//                System.out.println("C = "+c+" and readBuf = "+readBuf[0]);
+			                System.out.println("C = "+c);//+" and readBuf = "+readBuf[0]);
 			if (c > 0)
 			{
 				//  Display readout  //
@@ -158,25 +161,25 @@ public class SerialReader implements Runnable
 
 
 					if (startReading == 0) { // Wait for the start sequence
-						if (buffer[0] == 0x0d) {
-							flag[0]=0;flag[1]=0;flag[2]=0;flag[3]=0;
+						if (buffer[0] == 0x0d) { //Header Byte1
+							flag[0]=0;flag[1]=0;flag[2]=0;flag[3]=0;flag[4]=0;
 							flag[0] = 1;
 							//				System.out.println("\nflag[0] = %d\n", flag[0]);
 							//				fflush(stdout);
-						} else if (buffer[0] == 0x0a && flag[0] == 1){
+						} else if (buffer[0] == 0x0a && flag[0] == 1){ //Header Byte2
 							flag[1] = 1;
 							//				System.out.println("flag[1] = %d\n", flag[1]);
 							//				fflush(stdout);
-						} else if (buffer[0] == 0x7e && flag[1] == 1){
+						} else if (buffer[0] == 0x7e && flag[1] == 1){ //Header Byte3
 							flag[2] = 1;
 							//				System.out.println("flag[2] = %d\n", flag[2]);
 							//				fflush(stdout);
-						} else if (buffer[0] == 0x70 && flag[2] == 1){
+						} else if (buffer[0] == 0x70 && flag[2] == 1){ //ID = DORIENT
 							flag[3] = 1;
 							//				System.out.println("flag[3] = %d\n", flag[3]);
 							//				fflush(stdout);
 
-						} else if (buffer[0] == 0x12 && flag[3] == 1){
+						} else if (buffer[0] == 0x12 && flag[3] == 1){ //Count = 18 Bytes
 							flag[4] = 1;
 							//System.out.println("flag[4] = %d\n", flag[4]);
 							//fflush(stdout);
@@ -221,5 +224,6 @@ public class SerialReader implements Runnable
 			} // finish reading header
 
 		}
+		System.out.println("Done");
 	}
 }
