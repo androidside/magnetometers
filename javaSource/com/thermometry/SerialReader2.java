@@ -33,7 +33,7 @@ public class SerialReader2 implements Runnable {
 
 		int count = 0;
 		int startReading = 0;
-		int flag[] = {0, 0};
+		int flag[] = { 0, 0 };
 		char raw_data[] = new char[50];
 		int result[] = new int[50];
 		int checksum_index = 0;
@@ -53,78 +53,83 @@ public class SerialReader2 implements Runnable {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			//System.out.println("C = " + c + " and readBuf = " + buffer[0]);
-			if (c>0) {
+			// System.out.println("C = " + c + " and readBuf = " + buffer[0]);
+			if (c > 0) {
 				if (buffer[0] == 10 && prev == 13) { // Header bytes LF+CR
 					startReading = 1; // Start reading data
 					count = 0;
 				}
 				prev = buffer[0];
+				try {
+					if (startReading == 1) { // Wait for the start sequence
+						if (buffer[0] == 13 && count > 1) { // Until next header
+							startReading = 0;
+							roll = Double.parseDouble((new String(raw_data)).substring(0, count));
+							// sscanf(raw_data, "%lf", &roll);
+							// memset(raw_data, 0, sizeof(raw_data));
+							count = 0;
+							flag[0] = 0; // Reset flags
+							flag[1] = 0; // Reset flags
+							// flag[2] = 0; // Reset flags
 
+							System.out.printf("\n********  Data   ************\n");
+							System.out.printf("Roll: %.2f\n", roll);
+							System.out.printf("Pitch: %.2f\n", pitch);
+							System.out.printf("Azimuth: %.2f\n", azimuth);
+							System.out.printf("*****************************\n");
 
-				if (startReading == 1) { // Wait for the start sequence
-					if (buffer[0] == 13) { // Until next header
-						startReading = 0;
-						roll=Double.parseDouble((new String(raw_data)).substring(0, count));
-						//sscanf(raw_data, "%lf", &roll);
-						//memset(raw_data, 0, sizeof(raw_data));
-						count = 0;
-						flag[0] = 0; // Reset flags
-						flag[1] = 0; // Reset flags
-						//flag[2] = 0; // Reset flags
+							j++;
+							process = true;
 
-						System.out.printf("\n********  Data   ************\n");
-						System.out.printf("Roll: %.2f\n", roll);
-						System.out.printf("Pitch: %.2f\n", pitch);
-						System.out.printf("Azimuth: %.2f\n", azimuth);
-						System.out.printf("*****************************\n");
+						} else { // Store data in array
+							if (buffer[0] == 44 && count > 1) { // If comma
+								if (flag[0] == 1 && flag[1] == 0) {
+									pitch = Double.parseDouble((new String(raw_data)).substring(0, count));
+									// sscanf(raw_data, "%lf", &pitch);
+									// memset(raw_data, 0, sizeof(raw_data));
+									count = 0;
+									flag[1] = 1;
+								}
 
-						j++;
-						process = true;
+								if (flag[0] == 0) {
+									azimuth = Double.parseDouble((new String(raw_data)).substring(0, count));
+									// sscanf(raw_data, "%lf", &azimuth);
+									// memset(raw_data, 0, sizeof(raw_data));
+									count = 0;
+									flag[0] = 1;
+								}
 
-					} else { // Store data in array
-						if (buffer[0] == 44) { // If comma
-							if (flag[0] == 1 && flag[1] == 0) {
-								pitch=Double.parseDouble((new String(raw_data)).substring(0, count));
-								//sscanf(raw_data, "%lf", &pitch);
-								//memset(raw_data, 0, sizeof(raw_data));
-								count = 0;
-								flag[1] = 1;
+							} else if (buffer[0] != 10) {
+								raw_data[count] = (char) buffer[0];
+								count++;
 							}
-
-							if (flag[0] == 0) {
-								azimuth=Double.parseDouble((new String(raw_data)).substring(0, count));
-								//sscanf(raw_data, "%lf", &azimuth);
-								//memset(raw_data, 0, sizeof(raw_data));
-								count = 0;
-								flag[0] = 1;
-							}
-
-						} else if (buffer[0]!=10) {
-							raw_data[count] = (char) buffer[0];
-							count++;
 						}
+
+						if (process == true) {
+							count = 0;
+							startReading = 0;
+							process = false;
+						} // End of process loop
+
 					}
-
-					if (process == true) {
-						count = 0;
-						startReading = 0;
-						process = false;
-					} // End of process loop
-
-
+				} catch (NumberFormatException nfe) {
+					System.out.println("Bad number parsing.");
+					count = 0;
+					startReading = 0;
+					process = false;
 				}
-				else if (c < 0) {
-					done = true;
-					try {
-						throw new IOException("Stream closed");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+			} else if (c < 0) {
+				done = true;
+				try {
+					throw new IOException("Stream closed");
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-
 			} // finish reading header
 
-		}System.out.println("Done");
+		}
+		System.out.println("Done");
+
 	}
+
 }
